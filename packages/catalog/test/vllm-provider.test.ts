@@ -1,15 +1,16 @@
-import { afterEach, describe, expect, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { vllmModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
 import type { FetchImpl } from "@oh-my-pi/pi-catalog/types";
 
-const ORIGINAL_VLLM_BASE_URL = Bun.env.VLLM_BASE_URL;
+let originalBaseUrl: string | undefined;
+
+beforeEach(() => {
+	originalBaseUrl = Bun.env.VLLM_BASE_URL;
+});
 
 afterEach(() => {
-	if (ORIGINAL_VLLM_BASE_URL === undefined) {
-		delete Bun.env.VLLM_BASE_URL;
-		return;
-	}
-	Bun.env.VLLM_BASE_URL = ORIGINAL_VLLM_BASE_URL;
+	if (originalBaseUrl === undefined) delete Bun.env.VLLM_BASE_URL;
+	else Bun.env.VLLM_BASE_URL = originalBaseUrl;
 });
 
 function recordingFetch(requestedUrls: string[]): FetchImpl {
